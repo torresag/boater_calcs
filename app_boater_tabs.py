@@ -51,10 +51,10 @@ with tab2:
             "motor interno nafta",
             "motor interno diesel"
         ], key="motor_curva")
-        hp_c = st.number_input("HP", 10, 300, 100, step=10, key="hp_curva")
-        vel_c = st.number_input("Velocidad crucero (nudos)", 1.0, 100.0, 20.0, key="vel_curva")
-        asientos_c = st.number_input("Asientos", 1, 30, 6, key="asientos_curva")
-        espera_c = st.number_input("Tiempo de espera (horas)", 0.0, 24.0, 0.0, key="espera_curva")
+        hp_c = st.number_input("HP", min_value=10, max_value=300, value=100, step=10, format="%d", key="hp_curva")
+        vel_c = st.number_input("Velocidad crucero (nudos)", min_value=1, max_value=100, value=20, step=1, format="%d", key="vel_curva")
+        asientos_c = st.number_input("Asientos", min_value=1, max_value=30, value=6, step=1, format="%d", key="asientos_curva")
+        espera_c = st.number_input("Tiempo de espera (horas)", min_value=0, max_value=24, value=0, step=1, format="%d", key="espera_curva")
 
         submitted = st.form_submit_button("Agregar curva")
         if submitted:
