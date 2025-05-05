@@ -81,12 +81,17 @@ def calcular_costo(tipo_motor, hp, vel_crucero, asientos, distancia, precio_comb
     distancia_real = max(distancia, 10)  # mínimo 10 km
     costo_total = costo_por_km * distancia_real
     if tiempo_espera is not None and tiempo_espera > 0:
-        # Cargar tabla de espera desde Excel
-        df_espera = df[df["km"] == "espera"].drop("km", axis=1)
-        df_espera.columns = df_espera.columns.astype(float)
-        columna_espera = obtener_valor_mas_cercano(df_espera.columns, distancia)
-        tarifa_por_hora = df_espera[columna_espera].values[0]
-        costo_total += tarifa_por_hora * tiempo_espera
+        # Buscar fila 'espera' y extraer columnas numéricas
+        fila_espera = df[df.eq("espera").any(axis=1)].reset_index(drop=True)
+        if not fila_espera.empty:
+            fila_espera = fila_espera.dropna(axis=1)
+            fila_espera.columns = fila_espera.columns.astype(str)
+            columnas_validas = [col for col in fila_espera.columns if col not in ["km", "Caballos de fuerza", "Asientos", "espera"]]
+            columnas_numericas = [float(c) for c in columnas_validas if c.replace('.', '', 1).isdigit()]
+            columna_espera = obtener_valor_mas_cercano(columnas_numericas, distancia)
+            columna_espera_str = str(int(columna_espera)) if columna_espera == int(columna_espera) else str(columna_espera)
+            tarifa_por_hora = float(fila_espera[columna_espera_str].values[0])
+            costo_total += tarifa_por_hora * tiempo_espera
 
     return costo_por_km, costo_total
 
@@ -102,8 +107,9 @@ def calcular_costo_viaje():
         precio_combustible = precio_benzina
     asientos = int(input("Número de asientos: "))
     distancia = float(input("Distancia a recorrer (km): "))
+    tiempo_espera = float(input("Tiempo de espera (horas): "))
 
-    costo_por_km, costo_total = calcular_costo(tipo_motor, hp, vel_crucero, asientos, distancia, precio_combustible)
+    costo_por_km, costo_total = calcular_costo(tipo_motor, hp, vel_crucero, asientos, distancia, precio_combustible, tiempo_espera)
 
     # Resultado
     print(f"\nCosto por kilómetro: €{costo_por_km:.2f}")
