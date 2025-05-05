@@ -78,7 +78,7 @@ def calcular_costo(tipo_motor, hp, vel_crucero, asientos, distancia, precio_comb
     # Cálculo
     consumo = (hp * coeficientes[tipo_motor]) / (vel_crucero * 1.852)
     costo_por_km = consumo * 3 * precio_combustible * factor_hp * factor_asientos
-    distancia_real = max(distancia, 10)  # mínimo 10 km
+    distancia_real = max(distancia, 12)  # mínimo 12 km
     costo_total = costo_por_km * distancia_real
     if tiempo_espera is not None and tiempo_espera > 0:
         # Buscar fila 'espera' y extraer columnas numéricas
