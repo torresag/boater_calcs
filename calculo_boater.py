@@ -40,7 +40,7 @@ def obtener_precios_lombardia():
 def obtener_valor_mas_cercano(col_list, valor):
     return min(col_list, key=lambda x: abs(float(x) - valor))
 
-def calcular_costo(tipo_motor, hp, vel_crucero, asientos, distancia, precio_combustible):
+def calcular_costo(tipo_motor, hp, vel_crucero, asientos, distancia, precio_combustible, tiempo_espera=None):
     # Cargar las tablas desde Excel
     df = pd.read_excel("Boater_excel.xlsx", sheet_name="Foglio1")
 
@@ -78,7 +78,15 @@ def calcular_costo(tipo_motor, hp, vel_crucero, asientos, distancia, precio_comb
     # Cálculo
     consumo = (hp * coeficientes[tipo_motor]) / (vel_crucero * 1.852)
     costo_por_km = consumo * 3 * precio_combustible * factor_hp * factor_asientos
-    costo_total = costo_por_km * distancia
+    distancia_real = max(distancia, 10)  # mínimo 10 km
+    costo_total = costo_por_km * distancia_real
+    if tiempo_espera is not None and tiempo_espera > 0:
+        # Cargar tabla de espera desde Excel
+        df_espera = df[df["km"] == "espera"].drop("km", axis=1)
+        df_espera.columns = df_espera.columns.astype(float)
+        columna_espera = obtener_valor_mas_cercano(df_espera.columns, distancia)
+        tarifa_por_hora = df_espera[columna_espera].values[0]
+        costo_total += tarifa_por_hora * tiempo_espera
 
     return costo_por_km, costo_total
 
