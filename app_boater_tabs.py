@@ -20,10 +20,10 @@ with tab1:
         "motor interno diesel"
     ])
     hp = st.number_input("HP (Caballos de fuerza)", min_value=10, max_value=300, step=10, value=100)
-    velocidad = st.number_input("Velocidad crucero (nudos)", min_value=1.0, value=20.0)
+    velocidad = st.number_input("Velocidad crucero (nudos)", min_value=1, value=20, step=1, format="%d")
     asientos = st.number_input("Cantidad de asientos", min_value=1, max_value=30, value=6)
-    distancia = st.number_input("Distancia del viaje (km)", min_value=1.0, value=10.0)
-    tiempo_espera = st.number_input("Tiempo de espera (horas)", min_value=0, max_value=24, value=0, step=1, format="%d")
+    distancia = st.number_input("Distancia del viaje (km)", min_value=1, value=10, step=1, format="%d")
+    tiempo_espera = st.number_input("Tiempo de espera (horas)", min_value=0, value=0, step=1, format="%d")
 
     if st.button("Calcular costo individual"):
         try:
@@ -54,7 +54,7 @@ with tab2:
         hp_c = st.number_input("HP", 10, 300, 100, step=10, key="hp_curva")
         vel_c = st.number_input("Velocidad crucero (nudos)", 1.0, 100.0, 20.0, key="vel_curva")
         asientos_c = st.number_input("Asientos", 1, 30, 6, key="asientos_curva")
-        tiempo_espera = st.number_input("Tiempo de espera (horas)", min_value=0, max_value=24, value=0, step=1, format="%d", key="espera_curva")
+        espera_c = st.number_input("Tiempo de espera (horas)", 0.0, 24.0, 0.0, key="espera_curva")
 
         submitted = st.form_submit_button("Agregar curva")
         if submitted:
@@ -67,7 +67,7 @@ with tab2:
                 "vel": vel_c,
                 "asientos": asientos_c,
                 "precio": precio_c,
-                "espera": tiempo_espera
+                "espera": espera_c
             })
             st.success(f"Curva '{nombre}' agregada")
 
